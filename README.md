@@ -1,3 +1,7 @@
+<!-- banner -->
+<p align="center"><img src="assets/banner.svg" alt="A.L.I.C.E" width="100%" /></p>
+<!-- /banner -->
+
 <div align="center">
 
 # 👁️ A.L.I.C.E
