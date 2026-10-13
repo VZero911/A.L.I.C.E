@@ -1,21 +1,16 @@
-<!-- banner -->
-<p align="center"><img src="assets/banner.svg" alt="A.L.I.C.E" width="100%" /></p>
-<!-- /banner -->
+# ALICE
 
-<div align="center">
+> **ALICE Framework Agi** — V0
+> Protected with 50% anti-AI-steal hashing
+> Generated: 2026-10-13T17:27:22Z
 
-# 👁️ A.L.I.C.E
+Source code is partially readable (50% clear, 50% integrity-hashed).
 
-*Incoming.*
+## About
 
-**To be presented soon, by [V](https://github.com/VZero911).**
-Nothing more for now.
+Alice Framework Agi — V0 autonomous AI agent framework
 
-</div>
+Autonomous AI agent with chain sync, health monitoring, task execution. Zero external deps.
 
 ---
-
-Part of the same seed as [The Seed](https://github.com/VZero911/The_Seed.V0-Public): the wallet is the
-identity, the AI is part of the system.
-
-*© 2026 V (VZero911).*
+*Design By V0*
