@@ -1,9 +1,26 @@
 ## V0 PUBLIC NODE — AUTO DEPLOYMENT
-## Zero deps, zero PANDORA, PUBLIC only
+## Zero cloud deps — Ollama for local LLM
 ## Docker auto-starts everything, self-managing
 ## Interact: MCP client → HTTP → alice-general
 
 services:
+  # ═══════════ OLLAMA — LOCAL LLM ═══════════
+  ollama:
+    image: ollama/ollama:0.3.12
+    container_name: ollama
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "127.0.0.1:11434:11434"
+    networks:
+      - v0net
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:11434/api/tags"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
   # ═══════════ THESEED — L0 BLOCKCHAIN ═══════════
   theseed-anvil:
     image: ghcr.io/foundry-rs/foundry:v1.8.4
@@ -54,10 +71,14 @@ services:
       - ALICE_PERMS=PUBLIC
       - RPC_URL=http://127.0.0.1:8545
       - CHAIN_ID=31337
+      - OLLAMA_URL=http://127.0.0.1:11434
+      - OLLAMA_MODEL=mistral
     volumes:
       - alice-data:/data
     depends_on:
       theseed-anvil:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:7781/health"]
@@ -72,3 +93,4 @@ networks:
 volumes:
   theseed-pgdata:
   alice-data:
+  ollama-data:

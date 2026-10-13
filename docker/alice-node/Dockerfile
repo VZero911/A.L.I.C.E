@@ -15,5 +15,7 @@ ENV ALICE_ROLE=GENERAL
 ENV ALICE_PORT=7781
 ENV RPC_URL=http://host.docker.internal:8545
 ENV CHAIN_ID=31337
+ENV OLLAMA_URL=http://host.docker.internal:11434
+ENV OLLAMA_MODEL=mistral
 
 ENTRYPOINT ["./entrypoint.sh"]
