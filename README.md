@@ -30,7 +30,7 @@ Includes **Ollama** for local LLM inference — no Anthropic/OpenAI API key need
 <p align="center">
   <img src="https://img.shields.io/badge/Dashboard-106%20panels-8f6cf0?style=flat-square&labelColor=07060f" />
   <img src="https://img.shields.io/badge/AI%20modules-36-00ffcc?style=flat-square&labelColor=07060f" />
-  <img src="https://img.shields.io/badge/x402%20routes-12-f2c14e?style=flat-square&labelColor=07060f" />
+  <img src="https://img.shields.io/badge/x402%20routes-36-f2c14e?style=flat-square&labelColor=07060f" />
   <img src="https://img.shields.io/badge/Tools-156-5fd38d?style=flat-square&labelColor=07060f" />
   <img src="https://img.shields.io/badge/LoC-132K-c0caf5?style=flat-square&labelColor=07060f" />
   <img src="https://img.shields.io/badge/Containers-7-2496ED?style=flat-square&labelColor=07060f" />
