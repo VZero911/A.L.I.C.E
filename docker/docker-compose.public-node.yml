@@ -1,0 +1,74 @@
+## V0 PUBLIC NODE — AUTO DEPLOYMENT
+## Zero deps, zero PANDORA, PUBLIC only
+## Docker auto-starts everything, self-managing
+## Interact: Claude Code → HTTP → alice-general
+
+services:
+  # ═══════════ THESEED — L0 BLOCKCHAIN ═══════════
+  theseed-anvil:
+    image: ghcr.io/foundry-rs/foundry:v1.8.4
+    container_name: theseed-anvil
+    restart: unless-stopped
+    entrypoint: ["anvil", "--host", "0.0.0.0", "--port", "8545", "--chain-id", "31337", "--block-time", "2", "--accounts", "20"]
+    ports:
+      - "127.0.0.1:8545:8545"
+    networks:
+      - v0net
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8545"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  theseed-postgres:
+    image: postgres:16-alpine
+    container_name: theseed-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: theseed
+      POSTGRES_USER: theseed
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-theseed_v0_local}
+    volumes:
+      - theseed-pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    networks:
+      - v0net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U theseed"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # ═══════════ ALICE-NODE — AUTONOMOUS AGENT ═══════════
+  alice-node:
+    build:
+      context: ./alice-node
+      dockerfile: Dockerfile
+    container_name: alice-node
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - ALICE_ROLE=GENERAL
+      - ALICE_PORT=7781
+      - ALICE_PERMS=PUBLIC
+      - RPC_URL=http://127.0.0.1:8545
+      - CHAIN_ID=31337
+    volumes:
+      - alice-data:/data
+    depends_on:
+      theseed-anvil:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:7781/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  v0net:
+    driver: bridge
+
+volumes:
+  theseed-pgdata:
+  alice-data:
