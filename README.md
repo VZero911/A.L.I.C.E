@@ -6,6 +6,8 @@
 
 Source code is partially readable (50% clear, 50% integrity-hashed).
 
+`ANTI-NETRUNNER` — Source integrity hashing prevents automated AI scraping and unauthorized code replication.
+
 ## About
 
 Alice Framework Agi — V0 autonomous AI agent framework
