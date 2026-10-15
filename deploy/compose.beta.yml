@@ -1,0 +1,87 @@
+# The Seed — production stack for a VPS (built on infra/beta, with the subdomain edge of this dir).
+#
+# Shipped to the server at $APP_DIR (default /opt/theseed) by deploy.sh, then brought up with:
+#   docker compose --env-file .env.beta -f deploy/compose.beta.yml up -d --build
+#
+# Difference from infra/beta/docker-compose.yml: the Caddy service mounts deploy/Caddyfile.prod
+# (apex showcase + play./api./app./console. subdomains) and three static roots:
+# game/dist, web/dist and the built showcase site. The chain is an external RPC (Base Sepolia);
+# no Anvil here. Backend/indexer/migrate are unchanged from infra/beta.
+name: theseed-beta
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: infra/beta/Dockerfile.backend
+  restart: unless-stopped
+  env_file: .env.beta
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-theseed}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-theseed}
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-theseed}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-theseed}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    <<: *backend
+    restart: "no"
+    command: ["alembic", "upgrade", "head"]
+
+  backend:
+    <<: *backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  indexer:
+    <<: *backend
+    command: ["python", "-m", "app.indexer"]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN}
+      # Deny-by-default: empty CONSOLE_ALLOWLIST -> a TEST-NET range (RFC 5737) that no real client
+      # has -> the admin console returns 403 for everyone until V lists IPs (or uses a VPN).
+      CONSOLE_ALLOWLIST: ${CONSOLE_ALLOWLIST:-192.0.2.1/32}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile.prod:/etc/caddy/Caddyfile:ro
+      - ./game/dist:/srv/game:ro
+      - ./web/dist:/srv/web:ro
+      - ./infra/public/site:/srv/showcase:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

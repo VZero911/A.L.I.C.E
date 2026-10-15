@@ -1,0 +1,69 @@
+# Local rehearsal of the production edge — proves the routing + HTTPS config without a real server.
+#
+# Same layout as Caddyfile.prod, but:
+#   - the domain is the fake {$DOMAIN} (default boom.localhost), set by rehearsal.sh;
+#   - `tls internal` => Caddy's own CA, so no Let's Encrypt / no public server is needed;
+#   - origins are reached over host.docker.internal (the services / stand-ins on this machine),
+#     on ports passed by rehearsal.sh as PORT_SHOWCASE/PORT_GAME/PORT_API/PORT_WEB.
+#
+# This file is for the rehearsal only. The real edge is Caddyfile.prod.
+
+{
+	# No admin API, no telemetry; local CA on disk inside the container.
+	admin off
+}
+
+(secure_headers) {
+	header {
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+}
+
+{$DOMAIN}, www.{$DOMAIN} {
+	tls internal
+	import secure_headers
+	reverse_proxy host.docker.internal:{$PORT_SHOWCASE}
+}
+
+play.{$DOMAIN} {
+	tls internal
+	import secure_headers
+	reverse_proxy host.docker.internal:{$PORT_GAME}
+}
+
+api.{$DOMAIN} {
+	tls internal
+	import secure_headers
+	@api path /auth/* /me /me/* /game/* /social/* /names/* /market/* /notices /notices/* /contributors/* /reports /status /health /contracts
+	handle @api {
+		reverse_proxy host.docker.internal:{$PORT_API}
+	}
+	respond /console* 404
+	respond /admin* 404
+	respond 404
+}
+
+app.{$DOMAIN} {
+	tls internal
+	import secure_headers
+	reverse_proxy host.docker.internal:{$PORT_WEB}
+}
+
+console.{$DOMAIN} {
+	tls internal
+	import secure_headers
+	header X-Robots-Tag "noindex, nofollow"
+	# The allowlist gate, exactly as in prod: deny-by-default, as the FIRST handle block (a bare
+	# respond would be reordered after the handler and never fire). Empty CONSOLE_ALLOWLIST => the
+	# TEST-NET default (RFC 5737) => 403. rehearsal.sh proves allowed, blocked, and closed-by-default.
+	@notallowed not remote_ip {$CONSOLE_ALLOWLIST:192.0.2.1/32}
+	handle @notallowed {
+		respond "forbidden" 403
+	}
+	handle {
+		reverse_proxy host.docker.internal:{$PORT_WEB}
+	}
+}

@@ -1,0 +1,127 @@
+# The Seed — production edge (automatic HTTPS via Let's Encrypt).
+#
+# One domain, one layout (the beta runbook's §3, made concrete as subdomains):
+#   {$DOMAIN}            apex  -> the showcase (static, read-only, hardened; ADR 0029)
+#   www.{$DOMAIN}        -> the showcase (same site)
+#   play.{$DOMAIN}       -> the game (static web export, `make game-build`)
+#   api.{$DOMAIN}        -> the backend API, GAME routes only (never /admin or /console)
+#   app.{$DOMAIN}        -> the web tool (Vite build, `web/dist`)
+#   console.{$DOMAIN}    -> the admin console. NOT linked anywhere. CLOSED by default (403): it only
+#                           answers to the IPs in {$CONSOLE_ALLOWLIST}; the admin API lives ONLY here,
+#                           behind that gate; and the console's own system-admin sign-in is always on.
+#
+# {$DOMAIN} and {$CONSOLE_ALLOWLIST} come from .env.beta on the server.
+# CONSOLE_ALLOWLIST is a space-separated list of IPs/CIDRs, e.g. "203.0.113.4 2001:db8::/48".
+# EMPTY => the default below (192.0.2.1/32, RFC 5737 TEST-NET-1, which no real client ever has) =>
+# the console is CLOSED to everyone until V lists IPs. The runbook's preferred path is a VPN (§3, §7).
+
+# --- Shared security headers (snippet) -------------------------------------------------
+(secure_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=()"
+		Cross-Origin-Opener-Policy "same-origin"
+		-Server
+	}
+}
+
+# --- Apex + www: the showcase (static, GET/HEAD only, strict CSP) -----------------------
+{$DOMAIN}, www.{$DOMAIN} {
+	encode zstd gzip
+	import secure_headers
+	header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+
+	@writes not method GET HEAD OPTIONS
+	respond @writes 405
+	request_body {
+		max_size 1KB
+	}
+	@hidden path_regexp hidden \.(env|git|map|bak|sql|pem|key)(/|$)|/\.[^/]
+	respond @hidden 404
+
+	root * /srv/showcase
+	file_server {
+		hide .*
+	}
+	log {
+		output stdout
+		format filter {
+			request>remote_ip delete
+			request>client_ip delete
+			request>headers delete
+		}
+	}
+}
+
+# --- play.: the game (static SPA) ------------------------------------------------------
+play.{$DOMAIN} {
+	encode zstd gzip
+	import secure_headers
+	root * /srv/game
+	try_files {path} /index.html
+	file_server
+}
+
+# --- api.: the backend, GAME routes only ----------------------------------------------
+# @api lists exactly the routes the game and the public front need. /admin* and /console* are NOT in
+# @api, so they fall through to the final `respond 404`: the admin API is never reachable on api.
+# (it is served only on console., behind the IP gate). This is the public, rate-limited surface.
+api.{$DOMAIN} {
+	encode zstd gzip
+	import secure_headers
+
+	@api path /auth/* /me /me/* /game/* /social/* /names/* /market/* /notices /notices/* /contributors/* /reports /status /health /contracts
+	handle @api {
+		reverse_proxy backend:8000
+	}
+	# Anything else (including /admin* and /console*) is refused.
+	respond 404
+}
+
+# --- app.: the web tool (static SPA) --------------------------------------------------
+# Player-facing web dashboard. Static only — it proxies no API, so even though this build also
+# contains the admin console's client routes, those routes have no admin backend to reach from here
+# (api. 404s /admin and /console). The working, isolated console is console. below.
+app.{$DOMAIN} {
+	encode zstd gzip
+	import secure_headers
+	root * /srv/web
+	try_files {path} /index.html
+	file_server
+}
+
+# --- console.: the admin console — unlinked, CLOSED by default, its own sign-in --------
+# Two gates. Gate 1 (here): the IP allowlist, deny-by-default. Gate 2 (always on): the console's own
+# system-admin sign-in (15-min lockout), served by the SPA and checked by the backend. The admin API
+# (/admin/*, /console/*) is proxied ONLY on this host, so it exists solely behind Gate 1 — never on
+# the public api. host. This makes the console both isolated AND actually functional.
+console.{$DOMAIN} {
+	encode zstd gzip
+	import secure_headers
+	header X-Robots-Tag "noindex, nofollow"
+
+	# Gate 1 — IP allowlist, as the FIRST handle block (handle blocks are mutually exclusive and
+	# evaluated in written order: a blocked request matches here and never reaches the handlers
+	# below). Empty CONSOLE_ALLOWLIST => the TEST-NET default => no real client matches => 403 for
+	# everyone until V lists IPs (or, preferably, fronts this with a VPN).
+	# NOTE: this MUST be a `handle`, not a bare `respond @notallowed`: Caddy orders a bare respond
+	# after `handle`, so the handlers below would serve the request before the deny could fire.
+	@notallowed not remote_ip {$CONSOLE_ALLOWLIST:192.0.2.1/32}
+	handle @notallowed {
+		respond "The admin console is closed. Set CONSOLE_ALLOWLIST (or use a VPN) to open it." 403
+	}
+	# The full backend surface the console needs — including the admin routes that exist ONLY here.
+	@consoleapi path /auth/* /me /me/* /game/* /social/* /names/* /market/* /notices /notices/* /contributors/* /reports /status /health /contracts /admin/* /console/*
+	handle @consoleapi {
+		reverse_proxy backend:8000
+	}
+	# Gate 2 — the console SPA (its own system-admin sign-in).
+	handle {
+		root * /srv/web
+		try_files {path} /index.html
+		file_server
+	}
+}
