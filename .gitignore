@@ -1,0 +1,15 @@
+# Local Claude Code artifacts
+.claude/
+.claude/worktrees/
+
+# Dependencies
+node_modules/
+
+# Env / secrets (never commit real values; deploy/.env.beta.example is the template)
+.env
+.env.*
+!.env.*.example
+
+# OS / editor
+.DS_Store
+*.swp
