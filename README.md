@@ -29,7 +29,7 @@
 <p align="center">
   <img src="screenshots/dashboard.png" alt="ALICE Dashboard — 106 panels, live monitoring" width="860" />
 </p>
-<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, BERSERK firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
+<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, CYBER ENGINE firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
 
 ---
 
@@ -45,7 +45,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 - **Chain sync** — continuous background sync with L0 blockchain (chain 31337)
 - **Self-healing** — auto-recovery from disconnects, crashes, service failures
 - **106-panel dashboard** — React TSX, live metrics via WebSocket, 3 screens
-- **Defense engine** — BERSERK CYBER ENGINE, firewall, ghost mode, fortress lockdown
+- **Defense engine** — CYBER ENGINE, firewall, ghost mode, fortress lockdown
 - **MCP server** — 36 tools for Claude Code / Cursor with USDC micropayments
 - **Agent fleet** — master/general coordination, task delegation, swarm
 - **ChibiAlice** — animated desktop companion (Electron overlay)
@@ -74,7 +74,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 | Dashboard | 106 React TSX panels across 3 screens |
 | AI modules | 36 active (chain sync, defense, monitoring, trading, ...) |
 | MCP server | 36 tools for Claude Code / Cursor |
-| Docker | 7 containers (ALICE-MASTER, ALICE-GENERAL, TRUE-ALICE, Ollama, Anvil, PostgreSQL, TOA) |
+| Docker | 7 containers (ALICE-MASTER, ALICE-GENERAL, ALICE-CORE, Ollama, Anvil, PostgreSQL, TOA) |
 | Tools | 235 automation scripts |
 | Lines of code | 132K |
 | Unit tests | 34 test files (ALICE core) |
@@ -85,7 +85,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 
 ```
                          ┌─────────────────────┐
-                         │     TRUE ALICE       │
+                         │     ALICE-CORE       │
                          │  Local LLM (30.5B)   │
                          │  Ollama · VRAM       │
                          └──────────┬──────────┘
@@ -93,7 +93,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
               ┌─────────────────────┼─────────────────────┐
               │                     │                     │
     ┌─────────▼─────────┐ ┌────────▼────────┐ ┌─────────▼─────────┐
-    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │  BERSERK CYBER    │
+    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │  CYBER ENGINE     │
     │   Coordination    │ │  Task Worker    │ │  Defense Engine   │
     │   Delegation      │ │  Chain Sync     │ │  Firewall · Ghost │
     └─────────┬─────────┘ └────────┬────────┘ └─────────┬─────────┘
