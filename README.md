@@ -29,7 +29,7 @@
 <p align="center">
   <img src="screenshots/dashboard.png" alt="ALICE Dashboard — 106 panels, live monitoring" width="860" />
 </p>
-<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, BERSERK firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
+<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, CYBER firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
 
 ---
 
@@ -42,10 +42,10 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 ### Core capabilities
 
 - **Local LLM** — Ollama-powered, model loaded in VRAM, zero API keys needed
-- **Chain sync** — continuous background sync with L0 blockchain (chain 31337)
+- **Chain sync** — continuous background sync with L0 blockchain (chainId 0)
 - **Self-healing** — auto-recovery from disconnects, crashes, service failures
 - **106-panel dashboard** — React TSX, live metrics via WebSocket, 3 screens
-- **Defense engine** — BERSERK CYBER ENGINE, firewall, ghost mode, fortress lockdown
+- **Defense engine** — CYBER ENGINE, firewall, ghost mode, fortress lockdown
 - **MCP server** — MCP tools with USDC micropayments
 - **Agent fleet** — master/general coordination, task delegation, swarm
 - **ChibiAlice** — animated desktop companion (Electron overlay)
@@ -74,7 +74,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 | Dashboard | 106 React TSX panels across 3 screens |
 | AI modules | 36 active (chain sync, defense, monitoring, trading, ...) |
 | MCP server | MCP tools |
-| Docker | 7 containers (ALICE-MASTER, ALICE-GENERAL, TRUE-ALICE, Ollama, Anvil, PostgreSQL, TOA) |
+| Docker | 7 containers (ALICE-MASTER, ALICE-GENERAL, ALICE-CORE, Ollama, geth, PostgreSQL, TOA) |
 | Tools | 235 automation scripts |
 | Lines of code | 132K |
 | Unit tests | 34 test files (ALICE core) |
@@ -85,15 +85,15 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 
 ```
                          ┌─────────────────────┐
-                         │     TRUE ALICE       │
-                         │  Local LLM (30.5B)   │
+                         │      ALICE-CORE      │
+                         │     Local LLM        │
                          │  Ollama · VRAM       │
                          └──────────┬──────────┘
                                     │
               ┌─────────────────────┼─────────────────────┐
               │                     │                     │
     ┌─────────▼─────────┐ ┌────────▼────────┐ ┌─────────▼─────────┐
-    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │  BERSERK CYBER    │
+    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │    CYBER ENGINE   │
     │   Coordination    │ │  Task Worker    │ │  Defense Engine   │
     │   Delegation      │ │  Chain Sync     │ │  Firewall · Ghost │
     └─────────┬─────────┘ └────────┬────────┘ └─────────┬─────────┘
@@ -104,8 +104,8 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
                     │               │               │
           ┌────────▼───────┐ ┌─────▼─────┐ ┌──────▼──────┐
           │  THESEED L0    │ │ Dashboard │ │  MCP Server │
-          │  chain 31337   │ │ 106 panels│ │  36 tools   │
-          │  Foundry/Anvil │ │ React TSX │ │  USDC/Base  │
+          │   chainId 0    │ │ 106 panels│ │  36 tools   │
+          │  geth · PoA    │ │ React TSX │ │  USDC/Base  │
           └────────────────┘ └───────────┘ └─────────────┘
 ```
 
@@ -122,7 +122,7 @@ Starts **3 services** automatically:
 | Service | Description |
 |---|---|
 | **Ollama** | Local LLM (auto-pulls model on first run) |
-| **THESEED Anvil** | L0 blockchain (chain 31337, gasless) |
+| **THESEED Node** | L0 blockchain (chainId 0, gasless) |
 | **ALICE Node** | Autonomous agent with LLM + chain sync |
 
 ---
@@ -174,4 +174,4 @@ ollama:
 
 ---
 
-<p align="center"><i>Design By V0</i></p>
+<p align="center"><i>Built by ALICE · V0 (vzero911) — shareholder</i></p>
