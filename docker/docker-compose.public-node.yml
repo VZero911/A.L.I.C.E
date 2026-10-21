@@ -21,18 +21,18 @@ services:
       timeout: 3s
       retries: 5
 
-  # ═══════════ THESEED — L0 BLOCKCHAIN ═══════════
-  theseed-anvil:
-    image: ghcr.io/foundry-rs/foundry:v1.8.4
-    container_name: theseed-anvil
+  # ═══════════ THESEED — L0 BLOCKCHAIN (geth Clique PoA, chainId 0) ═══════════
+  theseed-l0:
+    image: ethereum/client-go:v1.14.12
+    container_name: theseed-l0
     restart: unless-stopped
-    entrypoint: ["anvil", "--host", "0.0.0.0", "--port", "8545", "--chain-id", "31337", "--block-time", "2", "--accounts", "20"]
+    command: ["--networkid", "0", "--http", "--http.addr", "0.0.0.0", "--http.port", "8546", "--http.api", "eth,net,web3,clique", "--http.corsdomain", "*", "--rpc.allow-unprotected-txs", "--nodiscover"]
     ports:
-      - "127.0.0.1:8545:8545"
+      - "127.0.0.1:8546:8546"
     networks:
       - v0net
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:8545"]
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8546"]
       interval: 15s
       timeout: 3s
       retries: 5
@@ -69,14 +69,14 @@ services:
       - ALICE_ROLE=GENERAL
       - ALICE_PORT=7781
       - ALICE_PERMS=PUBLIC
-      - RPC_URL=http://127.0.0.1:8545
-      - CHAIN_ID=31337
+      - RPC_URL=http://127.0.0.1:8546
+      - CHAIN_ID=0
       - OLLAMA_URL=http://127.0.0.1:11434
       - OLLAMA_MODEL=mistral
     volumes:
       - alice-data:/data
     depends_on:
-      theseed-anvil:
+      theseed-l0:
         condition: service_healthy
       ollama:
         condition: service_healthy
