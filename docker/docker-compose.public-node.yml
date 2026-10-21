@@ -26,6 +26,8 @@ services:
     image: ethereum/client-go:v1.14.12
     container_name: theseed-l0
     restart: unless-stopped
+    # --http.addr 0.0.0.0 is container-internal only (required for Docker port publishing);
+    # the host side is bound to 127.0.0.1 below — nothing is exposed to the network.
     command: ["--networkid", "0", "--http", "--http.addr", "0.0.0.0", "--http.port", "8546", "--http.api", "eth,net,web3,clique", "--http.corsdomain", "*", "--rpc.allow-unprotected-txs", "--nodiscover"]
     ports:
       - "127.0.0.1:8546:8546"

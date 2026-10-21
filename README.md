@@ -6,7 +6,7 @@
 
 <h1 align="center">A.L.I.C.E</h1>
 <p align="center"><b>Autonomous Local Intelligence & Cybernetic Entity</b></p>
-<p align="center"><i>Alice Framework Agi — runs 100% local, zero cloud dependency</i></p>
+<p align="center"><i>Alice Framework Agi — runs fully local, zero cloud dependency</i></p>
 
 <p align="center">
   <code>ANTI-NETRUNNER</code> — Source integrity hashing prevents automated AI scraping and unauthorized code replication. Full source available on request with identity verification.
