@@ -29,7 +29,7 @@
 <p align="center">
   <img src="screenshots/dashboard.png" alt="ALICE Dashboard — 106 panels, live monitoring" width="860" />
 </p>
-<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, CYBER firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
+<p align="center"><sub>106 React panels — live system monitoring, blockchain sync, defense audit, wallet, fleet overview, CYBER ENGINE firewall, GPU workload, process monitor, ghost mode, and more.</sub></p>
 
 ---
 
@@ -42,7 +42,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 ### Core capabilities
 
 - **Local LLM** — Ollama-powered, model loaded in VRAM, zero API keys needed
-- **Chain sync** — continuous background sync with L0 blockchain (chainId 0)
+- **Chain sync** — continuous background sync with L0 blockchain (chain 0)
 - **Self-healing** — auto-recovery from disconnects, crashes, service failures
 - **106-panel dashboard** — React TSX, live metrics via WebSocket, 3 screens
 - **Defense engine** — CYBER ENGINE, firewall, ghost mode, fortress lockdown
@@ -85,15 +85,15 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 
 ```
                          ┌─────────────────────┐
-                         │      ALICE-CORE      │
-                         │     Local LLM        │
+                         │     ALICE-CORE       │
+                         │  Local LLM (30.5B)   │
                          │  Ollama · VRAM       │
                          └──────────┬──────────┘
                                     │
               ┌─────────────────────┼─────────────────────┐
               │                     │                     │
     ┌─────────▼─────────┐ ┌────────▼────────┐ ┌─────────▼─────────┐
-    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │    CYBER ENGINE   │
+    │   ALICE-MASTER    │ │  ALICE-GENERAL  │ │  CYBER ENGINE     │
     │   Coordination    │ │  Task Worker    │ │  Defense Engine   │
     │   Delegation      │ │  Chain Sync     │ │  Firewall · Ghost │
     └─────────┬─────────┘ └────────┬────────┘ └─────────┬─────────┘
@@ -104,8 +104,8 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
                     │               │               │
           ┌────────▼───────┐ ┌─────▼─────┐ ┌──────▼──────┐
           │  THESEED L0    │ │ Dashboard │ │  MCP Server │
-          │   chainId 0    │ │ 106 panels│ │  36 tools   │
-          │  geth · PoA    │ │ React TSX │ │  USDC/Base  │
+          │  chain 0   │ │ 106 panels│ │  36 tools   │
+          │  geth PoA      │ │ React TSX │ │  USDC/Base  │
           └────────────────┘ └───────────┘ └─────────────┘
 ```
 
@@ -122,7 +122,7 @@ Starts **3 services** automatically:
 | Service | Description |
 |---|---|
 | **Ollama** | Local LLM (auto-pulls model on first run) |
-| **THESEED Node** | L0 blockchain (chainId 0, gasless) |
+| **THESEED geth** | L0 blockchain (chain 0, gasless) |
 | **ALICE Node** | Autonomous agent with LLM + chain sync |
 
 ---
@@ -174,4 +174,4 @@ ollama:
 
 ---
 
-<p align="center"><i>Built by ALICE · V0 (vzero911) — shareholder</i></p>
+<p align="center"><i>Design By V0</i></p>
