@@ -104,7 +104,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
                     │               │               │
           ┌────────▼───────┐ ┌─────▼─────┐ ┌──────▼──────┐
           │  THESEED L0    │ │ Dashboard │ │  MCP Server │
-          │  chain 0   │ │ 106 panels│ │  36 tools   │
+          │  chain 0       │ │ 106 panels│ │  36 tools   │
           │  geth PoA      │ │ React TSX │ │  USDC/Base  │
           └────────────────┘ └───────────┘ └─────────────┘
 ```
