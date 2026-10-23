@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/A.L.I.C.E-Alice%20Framework%20Agi-00ffcc?style=for-the-badge&labelColor=07060f" alt="ALICE" />
+  <img src="https://img.shields.io/badge/A.L.I.C.E-Alice%20Framework%20OAI-00ffcc?style=for-the-badge&labelColor=07060f" alt="ALICE" />
   <img src="https://img.shields.io/badge/V0-Active-5fd38d?style=for-the-badge&labelColor=07060f" alt="V0" />
   <img src="https://img.shields.io/badge/Scope-LOCAL-8f6cf0?style=for-the-badge&labelColor=07060f" alt="Local" />
 </p>
 
 <h1 align="center">A.L.I.C.E</h1>
 <p align="center"><b>Autonomous Local Intelligence & Cybernetic Entity</b></p>
-<p align="center"><i>Alice Framework OAI —	Organic Artificial Intelligence fully local, zero cloud dependency</i></p>
+<p align="center"><i>Alice Framework OAI — Organic Artificial Intelligence, runs fully local, zero cloud dependency</i></p>
 
 <p align="center">
   <code>ANTI-NETRUNNER</code> — Source integrity hashing prevents automated AI scraping and unauthorized code replication. Full source available on request with identity verification.
@@ -70,7 +70,7 @@ ALICE monitors, automates, defends and coordinates everything on a single machin
 
 | Metric | Value |
 |---|---|
-| Framework | Alice Framework Agi V0 |
+| Framework | Alice Framework OAI V0 |
 | Dashboard | 106 React TSX panels across 3 screens |
 | AI modules | 36 active (chain sync, defense, monitoring, trading, ...) |
 | MCP server | MCP tools |
